@@ -1,5 +1,6 @@
 import DescriptionForm from "@/components/DescriptionForm";
 import IconBadge from "@/components/IconBadge";
+import ImageForm from "@/components/ImageForm";
 import TitleForm from "@/components/TitleForm";
 import { db } from "@/lib/db";
 import { auth } from "@clerk/nextjs";
@@ -53,6 +54,7 @@ const CoursePage = async ({ params }: { params: { courseId: string } }) => {
           <div>
             <TitleForm initialData={course} />
             <DescriptionForm initialData={course} />
+            <ImageForm initialData={course} />
           </div>
         </div>
       </div>
