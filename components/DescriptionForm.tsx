@@ -13,33 +13,34 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import { Pencil } from "lucide-react";
 import { useState } from "react";
 import Link from "next/link";
 import toast from "react-hot-toast";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { cn } from "@/lib/utils";
+import { Textarea } from "./ui/textarea";
 
 const formSchema = z.object({
-  title: z.string().min(1, {
-    message: "Title is required",
+  description: z.string().min(1, {
+    message: "Description is required",
   }),
 });
 
-interface TitleFormProps {
+interface DescriptionFormProps {
   initialData: {
-    title: string;
+    description: string | null;
     id: string;
   };
 }
 
-const TitleForm = ({ initialData }: TitleFormProps) => {
+const DescriptionForm = ({ initialData }: DescriptionFormProps) => {
   const router = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      title: initialData.title,
+      description: initialData.description || "",
     },
   });
 
@@ -67,7 +68,7 @@ const TitleForm = ({ initialData }: TitleFormProps) => {
   return (
     <div className=" mt-5 bg-slate-200 rounded-lg p-5">
       <div className="flex items-center justify-between font-medium">
-        Course Title
+        Course Description
         <Button
           variant={"ghost"}
           onClick={() => {
@@ -79,14 +80,18 @@ const TitleForm = ({ initialData }: TitleFormProps) => {
           ) : (
             <>
               <Pencil className="h-4 w-4 mr-2" />
-              Edit title
+              Edit description
             </>
           )}
         </Button>
       </div>
       <div className="mt-2 text-sm">
         {!isEditting ? (
-          <>{initialData.title}</>
+          <div
+            className={cn(!initialData.description && "text-slate-400 italic ")}
+          >
+            {initialData.description || "No description"}
+          </div>
         ) : (
           <>
             <Form {...form}>
@@ -96,18 +101,18 @@ const TitleForm = ({ initialData }: TitleFormProps) => {
               >
                 <FormField
                   control={form.control}
-                  name="title"
+                  name="description"
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
-                        <Input
-                          placeholder="e.g 'Introduction to Accounting'"
+                        <Textarea
+                          placeholder="e.g 'This course is about...'"
                           disabled={isSubmitting}
                           {...field}
                         />
                       </FormControl>
                       <FormDescription>
-                        What will you teach in this course
+                        Give a description for the course
                       </FormDescription>
                       <FormMessage />
                     </FormItem>
@@ -127,4 +132,4 @@ const TitleForm = ({ initialData }: TitleFormProps) => {
   );
 };
 
-export default TitleForm;
+export default DescriptionForm;
