@@ -1,3 +1,4 @@
+import CategoryForm from "@/components/CategoryForm";
 import DescriptionForm from "@/components/DescriptionForm";
 import IconBadge from "@/components/IconBadge";
 import ImageForm from "@/components/ImageForm";
@@ -15,6 +16,12 @@ const CoursePage = async ({ params }: { params: { courseId: string } }) => {
   const course = await db.course.findUnique({
     where: {
       id: params.courseId,
+    },
+  });
+
+  const categories = await db.category.findMany({
+    orderBy: {
+      name: "asc",
     },
   });
 
@@ -55,6 +62,13 @@ const CoursePage = async ({ params }: { params: { courseId: string } }) => {
             <TitleForm initialData={course} />
             <DescriptionForm initialData={course} />
             <ImageForm initialData={course} />
+            <CategoryForm
+              initialData={course}
+              categories={categories.map((category) => ({
+                label: category.name,
+                value: category.id,
+              }))}
+            />
           </div>
         </div>
       </div>
