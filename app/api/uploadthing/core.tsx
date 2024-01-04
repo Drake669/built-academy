@@ -13,7 +13,6 @@ const handleAuth = () => {
 export const ourFileRouter = {
   // Define as many FileRoutes as you like, each with a unique routeSlug
   courseImage: f({ image: { maxFileSize: "4MB", maxFileCount: 1 } })
-    // Set permissions and file types for this FileRoute
     .middleware(() => handleAuth())
     .onUploadComplete(() => {}),
   courseAttachment: f(["audio", "image", "video", "pdf", "text"])

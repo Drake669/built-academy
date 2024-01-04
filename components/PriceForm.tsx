@@ -10,35 +10,37 @@ import {
   FormDescription,
   FormField,
   FormItem,
+  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Pencil } from "lucide-react";
 import { useState } from "react";
+import Link from "next/link";
 import toast from "react-hot-toast";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Textarea } from "./ui/textarea";
-import { Category, Course } from "@prisma/client";
-import { Combobox } from "./ui/combobox";
+import { Input } from "./ui/input";
+import formatNumber from "@/lib/format";
 
 const formSchema = z.object({
-  categoryId: z.string().min(1, {
-    message: "Category is required",
-  }),
+  price: z.coerce.number(),
 });
 
-interface CategoryFormProps {
-  initialData: Course;
-  categories: { label: string; value: string }[];
+interface PriceFormProps {
+  initialData: {
+    price: number | null;
+    id: string;
+  };
 }
 
-const CategoryForm = ({ initialData, categories }: CategoryFormProps) => {
+const PriceForm = ({ initialData }: PriceFormProps) => {
   const router = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      categoryId: initialData?.categoryId || "",
+      price: initialData?.price || undefined,
     },
   });
 
@@ -63,14 +65,10 @@ const CategoryForm = ({ initialData, categories }: CategoryFormProps) => {
   const toggleEditing = () => {
     setIsEditting(!isEditting);
   };
-
-  const selectedOption = categories.find(
-    (option) => option.value === initialData.categoryId
-  );
   return (
     <div className=" mt-5 bg-slate-200 rounded-lg p-5">
       <div className="flex items-center justify-between font-medium">
-        Course Category
+        Course Price
         <Button
           variant={"ghost"}
           onClick={() => {
@@ -82,17 +80,15 @@ const CategoryForm = ({ initialData, categories }: CategoryFormProps) => {
           ) : (
             <>
               <Pencil className="h-4 w-4 mr-2" />
-              Edit category
+              Edit price
             </>
           )}
         </Button>
       </div>
       <div className="mt-2 text-sm">
         {!isEditting ? (
-          <div
-            className={cn(!initialData.categoryId && "text-slate-400 italic ")}
-          >
-            {selectedOption?.label || "No category"}
+          <div className={cn(!initialData.price && "text-slate-400 italic ")}>
+            {initialData.price ? formatNumber(initialData.price) : "No price"}
           </div>
         ) : (
           <>
@@ -103,15 +99,18 @@ const CategoryForm = ({ initialData, categories }: CategoryFormProps) => {
               >
                 <FormField
                   control={form.control}
-                  name="categoryId"
+                  name="price"
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
-                        <Combobox {...field} options={categories} />
+                        <Input
+                          placeholder="0.00"
+                          type="number"
+                          step={0.01}
+                          disabled={isSubmitting}
+                          {...field}
+                        />
                       </FormControl>
-                      <FormDescription>
-                        Select a category for the course
-                      </FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -130,4 +129,4 @@ const CategoryForm = ({ initialData, categories }: CategoryFormProps) => {
   );
 };
 
-export default CategoryForm;
+export default PriceForm;
