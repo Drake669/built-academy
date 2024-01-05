@@ -98,6 +98,8 @@ const ImageForm = ({ initialData }: ImageFormProps) => {
                 <Image
                   src={initialData.imageUrl}
                   fill
+                  sizes="(max-width:700px)"
+                  priority
                   alt={`${initialData.title}`}
                   className="object-cover rounded-md"
                 />

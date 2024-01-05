@@ -1,5 +1,6 @@
 import AttachmentForm from "@/components/AttachmentForm";
 import CategoryForm from "@/components/CategoryForm";
+import ChaptersForm from "@/components/ChaptersForm";
 import DescriptionForm from "@/components/DescriptionForm";
 import IconBadge from "@/components/IconBadge";
 import ImageForm from "@/components/ImageForm";
@@ -23,8 +24,14 @@ const CoursePage = async ({ params }: { params: { courseId: string } }) => {
   const course = await db.course.findUnique({
     where: {
       id: params.courseId,
+      userId,
     },
     include: {
+      chapters: {
+        orderBy: {
+          postion: "asc",
+        },
+      },
       attachments: {
         orderBy: {
           createdAt: "desc",
@@ -53,6 +60,7 @@ const CoursePage = async ({ params }: { params: { courseId: string } }) => {
     course.imageUrl,
     course.price,
     course.categoryId,
+    course.chapters.some((chapter) => chapter.isPublished),
   ];
 
   const totalFields = requiredFields.length;
@@ -93,7 +101,7 @@ const CoursePage = async ({ params }: { params: { courseId: string } }) => {
                 <h2 className=" text-xl">Course Chapters</h2>
               </div>
             </div>
-            <div>TODO: COurses</div>
+            <ChaptersForm initialData={course} />
           </div>
           <div>
             <div className="flex items-center gap-x-2">
