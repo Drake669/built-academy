@@ -23,8 +23,8 @@ for(let item of list){
             postion: item.position
         }
     })
-    return new NextResponse("Chapters reordered succesfully", {status: 200})
 }
+return new NextResponse("Chapters reordered succesfully", {status: 200})
     } catch (error) {
         console.log("COURSE_REORDER", error)
         return new NextResponse("Server Error", {status: 500})
