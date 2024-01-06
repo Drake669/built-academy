@@ -21,6 +21,7 @@ import { cn } from "@/lib/utils";
 import { Textarea } from "./ui/textarea";
 import { Chapters, Course } from "@prisma/client";
 import { Input } from "./ui/input";
+import ChaptersList from "./ChaptersList";
 
 const formSchema = z.object({
   title: z.string().min(1, {
@@ -43,6 +44,7 @@ const ChaptersForm = ({ initialData }: ChaptersFormProps) => {
 
   const [isCreating, setIsCreating] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
+  const [reset, setReset] = useState(false);
 
   const { isSubmitting, isValid } = form.formState;
 
@@ -54,9 +56,35 @@ const ChaptersForm = ({ initialData }: ChaptersFormProps) => {
       );
       toggleCreating();
       router.refresh();
+      form.reset();
       toast.success("Chapter has been created");
     } catch (error) {
       toast.error("Chapter creation failed");
+    }
+  };
+
+  const onReorder = async (
+    updatedCourses: {
+      id: string;
+      position: number;
+    }[]
+  ) => {
+    try {
+      setIsUpdating(true);
+      const reponse = await axios.put(
+        `/api/courses/${initialData.id}/chapters/reorder`,
+        {
+          list: updatedCourses,
+        }
+      );
+      setReset(false);
+      toast.success("Chapters have been reordered succesfully");
+      router.refresh();
+    } catch (error) {
+      setReset(true);
+      toast.error("Unable to reorder chapters, please try again.");
+    } finally {
+      setIsUpdating(false);
     }
   };
 
@@ -64,7 +92,7 @@ const ChaptersForm = ({ initialData }: ChaptersFormProps) => {
     setIsCreating(!isCreating);
   };
   return (
-    <div className=" mt-5 bg-slate-200 rounded-lg p-5">
+    <div className=" mt-5 bg-slate-100 rounded-lg p-5">
       <div className="flex items-center justify-between font-medium">
         Course Chapters
         <Button
@@ -114,11 +142,15 @@ const ChaptersForm = ({ initialData }: ChaptersFormProps) => {
         {!isCreating && initialData.chapters.length === 0 && (
           <p className=" italic text-sm text-slate-500">No Chapters</p>
         )}
-        {!isCreating &&
-          initialData.chapters.length > 0 &&
-          initialData.chapters.map((chapter) => (
-            <p key={chapter.id}>{chapter.title}</p>
-          ))}
+        {!isCreating && initialData.chapters.length > 0 && (
+          <ChaptersList
+            onEdit={() => {}}
+            onReorder={onReorder}
+            chapters={initialData.chapters || []}
+            reset={reset}
+            setReset={setReset}
+          />
+        )}
         {!isCreating && (
           <p className="text-sm text-slate-500 mt-5">
             Drag and drop to re-arrange chapters
