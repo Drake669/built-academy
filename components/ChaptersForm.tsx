@@ -12,7 +12,7 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
-import { Pencil, PlusCircle } from "lucide-react";
+import { Loader2, Pencil, PlusCircle } from "lucide-react";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import axios from "axios";
@@ -92,7 +92,12 @@ const ChaptersForm = ({ initialData }: ChaptersFormProps) => {
     setIsCreating(!isCreating);
   };
   return (
-    <div className=" mt-5 bg-slate-100 rounded-lg p-5">
+    <div className="relative mt-5 bg-slate-100 rounded-lg p-5">
+      {isUpdating && (
+        <div className="absolute h-full w-full flex justify-center items-center bg-slate-500/20 top-0 right-0 rounded-md">
+          <Loader2 className="h-6 w-6 animate-spin" />
+        </div>
+      )}
       <div className="flex items-center justify-between font-medium">
         Course Chapters
         <Button
