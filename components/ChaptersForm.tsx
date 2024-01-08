@@ -149,7 +149,9 @@ const ChaptersForm = ({ initialData }: ChaptersFormProps) => {
         )}
         {!isCreating && initialData.chapters.length > 0 && (
           <ChaptersList
-            onEdit={() => {}}
+            onEdit={(id) => {
+              router.push(`/teacher/courses/${initialData.id}/chapters/${id}`);
+            }}
             onReorder={onReorder}
             chapters={initialData.chapters || []}
             reset={reset}
