@@ -1,9 +1,11 @@
+import ChapterAccessSettings from "@/components/ChapterAccessSettings";
 import ChapterDescriptionForm from "@/components/ChapterDescriptionForm";
 import ChapterTitleForm from "@/components/ChapterTitleForm";
+import ChapterVideoForm from "@/components/ChapterVideoForm";
 import IconBadge from "@/components/IconBadge";
 import { db } from "@/lib/db";
 import { auth } from "@clerk/nextjs";
-import { ArrowLeft, LayoutDashboard } from "lucide-react";
+import { ArrowLeft, Eye, LayoutDashboard, Video } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
@@ -62,6 +64,28 @@ const ChapterEditPage = async ({
                   courseId={params.courseId}
                 />
                 <ChapterDescriptionForm
+                  initialData={chapter}
+                  courseId={params.courseId}
+                />
+              </div>
+              <div>
+                <div className="flex items-center gap-x-2">
+                  <IconBadge icon={Eye} />
+                  <h2 className="text-xl">Access Settings</h2>
+                </div>
+                <ChapterAccessSettings
+                  initialData={chapter}
+                  courseId={params.courseId}
+                />
+              </div>
+            </div>
+            <div className="space-y-4">
+              <div>
+                <div className="flex items-center gap-x-2">
+                  <IconBadge icon={Video} />
+                  <h2 className="text-xl">Chapter video</h2>
+                </div>
+                <ChapterVideoForm
                   initialData={chapter}
                   courseId={params.courseId}
                 />
