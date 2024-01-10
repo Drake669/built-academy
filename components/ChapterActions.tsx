@@ -38,14 +38,37 @@ const ChapterActions = ({
       setLoading("");
     }
   };
-  const handlePublish = () => {};
+  const handlePublish = async () => {
+    try {
+      setLoading("publish");
+      await axios.patch(
+        `/api/courses/${courseId}/chapters/${chapterId}/publish`,
+        {
+          isPublished: true,
+        }
+      );
+      toast.success("Chapter has been published");
+      router.refresh();
+    } catch (error) {
+      toast.error("Failed to publish this chapter");
+    } finally {
+      setLoading("");
+    }
+  };
   return (
     <div className="flex items-center">
-      <Button variant={"ghost"} onClick={handlePublish}>
+      <Button
+        variant={"ghost"}
+        onClick={handlePublish}
+        disabled={!isComplete || loading === "publish"}
+      >
+        {loading === "publish" && (
+          <Loader2 className="w-4 h-4 animate-spin transition mr-1" />
+        )}
         {isPublished ? "Unpublish" : "Publish"}
       </Button>
       <ChapterDeleteModal onConfirm={handleDelete}>
-        <Button variant={"destructive"}>
+        <Button variant={"destructive"} disabled={loading === "delete"}>
           {loading === "delete" ? (
             <Loader2 className="w-4 h-4 text-white animate-spin transition" />
           ) : (

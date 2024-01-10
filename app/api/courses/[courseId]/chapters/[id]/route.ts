@@ -21,7 +21,7 @@ export async function PATCH(req: Request, {params}: {params: {courseId: string, 
 where: {
     id: params.id
 },data: {
-...values
+...values,
 }})
 
 if(values.videoUrl){
@@ -102,6 +102,23 @@ export async function DELETE(req: Request, {params}: {params: {courseId: string,
             courseId: params.courseId
         }
     })
+
+    const publishedChapters = await db.chapters.findMany({
+        where: {
+            courseId: params.courseId,
+            isPublished: true
+        }
+    })
+    if(!publishedChapters.length){
+        await db.course.update({
+            where: {
+                id: params.courseId
+            },
+            data:{
+                isPublished: false
+            }
+        })
+    }
     return new NextResponse("Chapter deleted successfully", {status: 200})
     } catch (error) {
         console.log("CHAPTER_DELETE ERROR")
