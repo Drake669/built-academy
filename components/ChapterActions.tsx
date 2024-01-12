@@ -55,11 +55,28 @@ const ChapterActions = ({
       setLoading("");
     }
   };
+  const handleUnpublish = async () => {
+    try {
+      setLoading("publish");
+      await axios.patch(
+        `/api/courses/${courseId}/chapters/${chapterId}/unpublish`,
+        {
+          isPublished: false,
+        }
+      );
+      toast.success("Chapter has been unpublished");
+      router.refresh();
+    } catch (error) {
+      toast.error("Failed to unpublish this chapter");
+    } finally {
+      setLoading("");
+    }
+  };
   return (
     <div className="flex items-center">
       <Button
         variant={"ghost"}
-        onClick={handlePublish}
+        onClick={isPublished ? handleUnpublish : handlePublish}
         disabled={!isComplete || loading === "publish"}
       >
         {loading === "publish" && (
